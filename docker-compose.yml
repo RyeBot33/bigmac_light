@@ -1,0 +1,36 @@
+version: "3"
+services:
+  influx:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./influx
+  telegraf:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./telegraf
+  broker:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./broker
+    ports:
+      - "1883:1883"
+    volumes:
+      - /app/node_modules
+  client:
+    stdin_open: true
+    environment:
+      - npm_config_unsafe_perm=true
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - ./client:/app
+    ports:
+      - "8080:8080"
+  server:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - /app/node_modules
+      - ./server:/app
