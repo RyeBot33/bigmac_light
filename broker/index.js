@@ -1,23 +1,49 @@
-var mosca = require("mosca");
+const mosca = require("mosca");
+const http = require("http");
+const config = require("../config/config");
 
-var settings = {
-  port: 1883,
-};
+const httpServ = http.createServer();
+const webSocketBroker = new mosca.Server({});
+const broker = new mosca.Server({ port: config.mqttPort });
+//Set up websocket support
+webSocketBroker.attachHttpServer(httpServ);
+httpServ.listen(3003);
 
-var server = new mosca.Server(settings);
-
-server.on("clientConnected", function (client) {
-  console.log("client connected", client.id);
+webSocketBroker.on("ready", () => {
+  console.log("Websockets Ready");
 });
 
-// fired when a message is received
-server.on("published", function (packet, client) {
-  console.log("Published", packet.payload);
+webSocketBroker.on("published", function (packet, client) {
+  if (client && client.id.toString().includes("mqttjs")) {
+    //console.log(client.id);
+    broker.publish(packet, function () {
+      //console.log(`packet ${JSON.stringify(packet)}`);
+    });
+  }
 });
 
-server.on("ready", setup);
+webSocketBroker.on("clientConnected", (client) => {
+  console.log("websocket client connected", client.id);
+});
 
-// fired when the mqtt server is ready
+//Setup main MQTT broker
+broker.on("clientConnected", function (client) {
+  console.log("mqtt client connected", client.id);
+});
+
+//fired when a message is received
+broker.on("published", function (packet, client) {
+  //console.log(packet.payload.toString());
+  webSocketBroker.publish(packet, function () {
+    //console.log(`${packet} published over websocket`);
+  });
+});
+
+broker.on("ready", setup);
+
+// fired when the mqtt broker is ready
 function setup() {
-  console.log("Mosca server is up and running");
+  console.log("Mosca broker is up and running");
 }
+
+module.exports = broker;

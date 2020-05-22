@@ -4,10 +4,18 @@ services:
     build:
       dockerfile: Dockerfile.dev
       context: ./influx
+  mongo:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./mongo
   telegraf:
     build:
       dockerfile: Dockerfile.dev
       context: ./telegraf
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
   broker:
     build:
       dockerfile: Dockerfile.dev
@@ -31,6 +39,8 @@ services:
     build:
       dockerfile: Dockerfile.dev
       context: ./server
+    ports:
+      - "5000:5000"
     volumes:
       - /app/node_modules
       - ./server:/app
