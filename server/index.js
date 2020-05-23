@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 // Express route handlers
 
 app.get("/", (req, res) => {
-  res.send("Heller");
+  res.send({ Heller: "world" });
 });
 
 app.listen(5000, (err) => {

@@ -1,5 +1,7 @@
 <template>
-  <h3>Schedule</h3>
+  <v-content>
+    <h3>Schedule</h3>
+  </v-content>
 </template>
 
 <script>

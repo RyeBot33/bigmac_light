@@ -21,20 +21,29 @@ services:
       dockerfile: Dockerfile.dev
       context: ./broker
     ports:
-      - "1883:1883"
+      - "1885:1885"
+      - "3003:3003"
     volumes:
       - /app/node_modules
-  client:
-    stdin_open: true
     environment:
-      - npm_config_unsafe_perm=true
+      - MQTT_PORT=1885
+      - WS_PORT=3003
+  client:
     build:
       dockerfile: Dockerfile.dev
       context: ./client
     volumes:
       - ./client:/app
     ports:
-      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - npm_config_unsafe_perm=true
+      - WS_PORT=3003
+      - BACKEND=server
+      - MQTT_URI=broker
+    depends_on:
+      - broker
+      - server
   server:
     build:
       dockerfile: Dockerfile.dev

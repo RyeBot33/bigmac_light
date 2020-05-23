@@ -1,23 +1,23 @@
 const mosca = require("mosca");
 const http = require("http");
-const config = require("../config/config");
+const config = require("./config/config");
 
 const httpServ = http.createServer();
 const webSocketBroker = new mosca.Server({});
-const broker = new mosca.Server({ port: config.mqttPort });
+const broker = new mosca.Server({ port: 1885 });
 //Set up websocket support
 webSocketBroker.attachHttpServer(httpServ);
 httpServ.listen(3003);
 
 webSocketBroker.on("ready", () => {
-  console.log("Websockets Ready");
+  console.log("Websockets Ready!!!!");
 });
 
 webSocketBroker.on("published", function (packet, client) {
   if (client && client.id.toString().includes("mqttjs")) {
     //console.log(client.id);
     broker.publish(packet, function () {
-      //console.log(`packet ${JSON.stringify(packet)}`);
+      console.log(`packet ${JSON.stringify(packet)}`);
     });
   }
 });
@@ -45,5 +45,3 @@ broker.on("ready", setup);
 function setup() {
   console.log("Mosca broker is up and running");
 }
-
-module.exports = broker;

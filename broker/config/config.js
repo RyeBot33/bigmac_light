@@ -1,3 +1,4 @@
 module.exports = {
-  mqttport: process.env.MQTT_PORT || 1883,
+  mqttPort: process.env.MQTT_PORT || 1885,
+  wsPort: process.env.WS_PORT || 3003,
 };

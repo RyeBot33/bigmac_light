@@ -1,5 +1,7 @@
 <template>
-  <h3>Lighting</h3>
+  <v-content>
+    <h3>Lighting</h3>
+  </v-content>
 </template>
 
 <script>
